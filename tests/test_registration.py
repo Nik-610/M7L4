@@ -7,6 +7,7 @@ from registration.registration import create_db, add_user, authenticate_user, di
 def setup_database():
     """Фикстура для настройки базы данных перед тестами и её очистки после."""
     create_db()
+    add_user('testuser', 'testuser@example.com', 'password123')
     yield
     try:
         os.remove('users.db')
@@ -35,6 +36,19 @@ def test_add_new_user(setup_database, connection):
     cursor.execute("SELECT * FROM users WHERE username='testuser';")
     user = cursor.fetchone()
     assert user, "Пользователь должен быть добавлен в базу данных."
+
+
+def test_auth_with_wrong_password():
+    result = authenticate_user('testuser', 'pasword123')
+    assert result is False, "Аутентификация должна быть неудачной при неправильном пароле"
+
+def test_auth_none_user():
+    result = authenticate_user('bob', 'hardpassword123')
+    assert result is False, "Аутентификация должна быть неудачной при несуществующем пользователе"
+
+def test_add_existing_user():
+    result = add_user('testuser', 'testuser@example.com', 'password123')
+    assert result is False, "Добавление пользователя с существующим логином должно возвращать False"
 
 # Возможные варианты тестов:
 """
