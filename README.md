@@ -42,5 +42,5 @@ pip install pytest
 ```bash
 pytest
 ```
-## Автор
+## Авторы
 Nikita Andreev
